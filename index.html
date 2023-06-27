@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login Google</title>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+<!--    JWT decode-->
+    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="buttonDiv"></div>
+
+<div class="info-user" id="dataInfo">
+    <img id="picture" src="" alt="imagem user">
+    <p id="fullName"></p>
+    <p id="sub" hidden></p>
+    <p id="given_name" hidden></p>
+    <p id="famaly_name" hidden></p>
+    <p id="email"></p>
+</div>
+<script>
+    function handleCredentialResponse(response) {
+        const data = jwt_decode(response.credential)
+        console.log(data)
+        const dataInfo = document.getElementById("dataInfo")
+        const fullName = document.getElementById("fullName");
+        const sub = document.getElementById("sub");
+        const given_name = document.getElementById("given_name");
+        const famaly_name = document.getElementById("famaly_name");
+        const email = document.getElementById("email");
+        const picture = document.getElementById("picture");
+
+        fullName.innerHTML = data.name;
+        sub.innerHTML = data.sub;
+        given_name.innerHTML = data.given_name;
+        famaly_name.innerHTML = data.family_name;
+        email.innerHTML = data.email;
+        picture.setAttribute("src", data.picture);
+
+        if (data.email_verified) {
+            dataInfo.style.display = "block"
+        }
+    }
+
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: "316526107787-i9q4mhc6i9b16dkt5igfmi17cqmaqinl.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            {
+                theme: "filled_blue",
+                size: "large",
+                type: "standard",
+                shape: "pill",
+                text: "continue_with",
+                locale: "pt-BR",
+                logo_alignment: "left",
+                width: "300"
+            }  // customization attributes
+        );
+        google.accounts.id.prompt(); // also display the One Tap dialog
+    }
+</script>
+
+</body>
+</html>
